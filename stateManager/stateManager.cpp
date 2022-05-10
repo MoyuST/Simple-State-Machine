@@ -9,15 +9,13 @@ namespace simpleStateMachine{
         while (system_status_ == StateManagerStatus::up) {
             bool rc;
 
-            //  Process any waiting weather updates
             do {
                 std::string update;
                 if ((rc = zmq_sub_->receive(update, false)) == true) {
                     std::unique_lock<std::mutex> lock(sub_buffer_lock_);
                     zmq_sub_buffer_->push(update);
                     system_zmq_info_ = nlohmann::json::parse(update);
-                    SIMPLELOG(NORMAL, system_zmq_info_.dump());
-                    // std::cout << system_zmq_info_.dump() << std::endl;
+                    // SIMPLELOG(NORMAL, system_zmq_info_.dump());
                 }
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             } while(rc == true && system_status_ == StateManagerStatus::up);

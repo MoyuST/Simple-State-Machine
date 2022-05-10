@@ -109,10 +109,14 @@ namespace simpleStateMachine{
                 return state_manager;
             }
 
-            static StateManager * spin(){
-                signal (SIGINT, stop_controller);
+            static void spin(){
+                // save previous handler
+                sighandler_t previous_handler = signal(SIGINT, stop_controller);
                 while(1){
+
                 }
+                // recover previous handler
+                signal(SIGINT, previous_handler);
             }
 
     };
