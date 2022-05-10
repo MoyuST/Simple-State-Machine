@@ -3,12 +3,12 @@
         "sub" : {
             "on" : true,
             "ip" : "localhost",
-            "port" : 5556,
+            "port" : 7777,
             "buffer_size" : 10
         },
         "pub" : {
             "on" : true,
-            "ip" : "localhost",
+            "ip" : "*",
             "port" : 5556,
             "buffer_size" : 10
         }

@@ -1,3 +1,6 @@
+#ifndef SIMPLE_STATE_MACHINE_QUEUEBUFFER
+#define SIMPLE_STATE_MACHINE_QUEUEBUFFER
+
 #include <queue>
 
 namespace simpleStateMachine{
@@ -36,3 +39,4 @@ namespace simpleStateMachine{
 
     };
 }
+#endif

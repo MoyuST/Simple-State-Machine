@@ -1,3 +1,5 @@
+#ifndef SIMPLE_STATE_MACHINE_SIMPLE_LOGGER
+#define SIMPLE_STATE_MACHINE_SIMPLE_LOGGER
 #include <iostream>
 #include <ctime> 
 #include <chrono>
@@ -9,3 +11,4 @@
         std::cout << "[stateManager][" << strtok(std::ctime(&cur_time_t), "\n") << "][" \
         << #STATUS << "] " << MSG << std::endl;                                         \
     } while(false)
+#endif
