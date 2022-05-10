@@ -21,7 +21,7 @@ During my first formal internship, I had read tons of codes of the company. Amon
 
 2. inputs
     <!-- how system detect the input to change its state -->
-    when making decision to whether to change from current state to another one, we need some necessary to make desicion. to make that much easier, pub/sub pattern will be used. that is, we will register our program as a subscriber with the aid of zmq, and all this program do is simply parse the message captured. if this feature is not necessary needed by you, you can disable it by modify the configure file.
+    when making decision to whether to change from current state to another one, we need some necessary to make desicion. to make that much easier, pub/sub pattern will be used. that is, we will register our program as a subscriber with the aid of zmq, and all this program do is simply parse the message captured. if this feature is not necessary needed by you, you can disable it by turning off the USE_ZMQ flag.
 
 3. monitor/outputs
     <!--  how others outside the system could find the state of the current system -->
@@ -32,10 +32,31 @@ During my first formal internship, I had read tons of codes of the company. Amon
 
 ## usage
 
-the basic usage could be found in the `example/example.cpp`, which initiate a simple state machine. to control the state machine in the example, you may need to start a zmq server like `example\example_helper.cpp`. `example` would be automatically generated after building the project using cmake. to build `example_helper`, simple type `make example_helper` in the example folder.
+the basic usage could be found in the `example/` folder, which include two sets of examples, one using built-in zmq function in the stateManger while another one use socket instead of zmq.
 
-![sample](Assets/imgs/sample.png)
+---
 
+for `example_zmq` and `example_zmq_helper`, it use the built-in zmq function. it require libs including zmqpp, zmq, sodium.
+running the following command to build them, notice the `example_zmq_helper` will be built in `example` folder
+```bash
+mkdir build
+cd build
+cmake .. -DUSE_ZMQPP=ON -DBUILD_EXAMPLE=ON
+cmake --build .
+```
+![example_zmq result](Assets/imgs/example_zmq.png)
+
+---
+
+for `example_socket` and `example_socket_helper`, it does not use the built-in zmq function and it use socket instead.
+running the following command to build them, notice the `example_socket_helper` will be built in `example` folder
+```bash
+mkdir build
+cd build
+cmake .. -DUSE_ZMQPP=OFF -DBUILD_EXAMPLE=ON
+cmake --build .
+```
+![example_socket result](Assets/img/../imgs/example_socket.png)
 
 ## current process
 
@@ -43,7 +64,7 @@ the basic usage could be found in the `example/example.cpp`, which initiate a si
 - [x] desgin
 - [x] functions
   - [x] basic functions (where zmq is mandatory)
-  - [ ] disable zmq using `config.json`
+  - [x] disable zmq using flag
 
 ### build & install
 - [x] build

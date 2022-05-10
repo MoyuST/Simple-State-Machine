@@ -1,5 +1,7 @@
 testFolder/
-build/*
+build*
 MakeFile
 *.o
 *.cpp
+example/*
+!example/*.cpp

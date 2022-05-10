@@ -7,12 +7,15 @@
 #include <mutex>
 #include <functional>
 #include <signal.h>
-#include <zmqpp/zmqpp.hpp>
 #include "basicState.hpp"
 #include "queueBuffer.hpp"
 #include "heapVec.hpp"
 #include "json.hpp"
 #include "simpleLogger.hpp"
+
+#ifdef USE_ZMQPP
+#include <zmqpp/zmqpp.hpp>
+#endif
 
 #define STATEMANAGER simpleStateMachine::StateManager::get_manager()
 
@@ -53,34 +56,37 @@ namespace simpleStateMachine{
             std::unordered_map<std::shared_ptr<BasicState>, unsigned int> state_to_id_;
             //////////////////////////////
 
-            std::shared_ptr<std::thread> zmq_sub_thread_=nullptr;
-            std::shared_ptr<std::thread> zmq_pub_thread_=nullptr;
-            std::shared_ptr<std::thread> status_control_thread_=nullptr;
             std::shared_ptr<BasicState> start_point_=nullptr;
             std::shared_ptr<BasicState> exist_point_=nullptr;
-            inline unsigned int get_id(std::shared_ptr<BasicState> state) { 
-                return state_to_id_.count(state)==0 ? 0 : state_to_id_[state];
-            }
-            StateManagerStatus system_status_=StateManagerStatus::idle;
-            std::shared_ptr<BasicState> current_state_=nullptr;
+            std::shared_ptr<std::thread> status_control_thread_=nullptr;
+
+#ifdef USE_ZMQPP
+            std::shared_ptr<std::thread> zmq_sub_thread_=nullptr;
+            std::shared_ptr<std::thread> zmq_pub_thread_=nullptr;
             std::shared_ptr<QueueBuffer<std::string>> zmq_sub_buffer_;
             std::shared_ptr<QueueBuffer<std::string>> zmq_pub_buffer_;
             unsigned int zmq_pub_msg_buffer_size_=10;
             unsigned int zmq_sub_msg_buffer_size_=10;
             void * zmq_sub_thread_worker();
             void * zmq_pub_thread_worker();
-            void * status_control_worker();
+            nlohmann::json system_zmq_info_;
+            std::shared_ptr<zmqpp::context> zmq_context_=nullptr;
+            std::shared_ptr<zmqpp::socket> zmq_sub_=nullptr;
+            std::shared_ptr<zmqpp::socket> zmq_pub_=nullptr;
             void push_sub_message(std::string msg);
             bool pop_pub_message(std::string &msg);
+#endif
+
+            inline unsigned int get_id(std::shared_ptr<BasicState> state) { 
+                return state_to_id_.count(state)==0 ? 0 : state_to_id_[state];
+            }
+            StateManagerStatus system_status_=StateManagerStatus::idle;
+            std::shared_ptr<BasicState> current_state_=nullptr;
+            void * status_control_worker();
             std::mutex status_lock_;
             std::mutex sub_buffer_lock_;
             std::mutex pub_buffer_lock_;
             std::mutex register_info_lock_;
-            nlohmann::json system_zmq_info_;
-
-            std::shared_ptr<zmqpp::context> zmq_context_=nullptr;
-            std::shared_ptr<zmqpp::socket> zmq_sub_=nullptr;
-            std::shared_ptr<zmqpp::socket> zmq_pub_=nullptr;
 
             static void stop_controller(int s){
                 SIMPLELOG(NORMAL, "capture SIGINT, terminating program");
@@ -95,14 +101,19 @@ namespace simpleStateMachine{
             void start_up_manager(std::string file_name);
             void register_transistion_func(std::shared_ptr<BasicState> from_state, std::shared_ptr<BasicState> to_state, uint32_t priority, transitFunc transit_func);
             void unregister_transistion_func(std::shared_ptr<BasicState> from_state, std::shared_ptr<BasicState> to_state);
+#ifdef USE_ZMQPP
             bool pop_sub_message(std::string &msg);
             void push_pub_message(std::string msg);
+#endif
             inline StateManagerStatus get_manager_status(){
                 return system_status_;
             }
+
+#ifdef USE_ZMQPP
             inline nlohmann::json system_zmq_info(){
                 return system_zmq_info_;
             }
+#endif
 
             static StateManager * & get_manager(){
                 static StateManager* state_manager = new StateManager();

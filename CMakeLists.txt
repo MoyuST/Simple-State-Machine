@@ -11,7 +11,7 @@ file(GLOB utilities_files
     "${PROJECT_SOURCE_DIR}/utilities/*.*"
 )
 
-add_library(simple_state_machine STATIC
+add_library(SIMPLESTATEMACHINE STATIC
     "${PROJECT_SOURCE_DIR}/basicState/basicState.hpp"
     "${PROJECT_SOURCE_DIR}/json/json.hpp"
     "${PROJECT_SOURCE_DIR}/simpleLogger/simpleLogger.hpp"
@@ -19,7 +19,7 @@ add_library(simple_state_machine STATIC
     ${utilities_files}
 )
 
-target_include_directories(simple_state_machine PRIVATE
+target_include_directories(SIMPLESTATEMACHINE PRIVATE
     "${PROJECT_SOURCE_DIR}/basicState"
     "${PROJECT_SOURCE_DIR}/json"
     "${PROJECT_SOURCE_DIR}/simpleLogger"
@@ -27,17 +27,41 @@ target_include_directories(simple_state_machine PRIVATE
     "${PROJECT_SOURCE_DIR}/utilities"
 )
 
-target_link_libraries(simple_state_machine zmqpp zmq sodium pthread)
 
-add_executable(example "${PROJECT_SOURCE_DIR}/example/example.cpp")
+option(USE_ZMQPP "use zmqpp" ON)
+option(BUILD_EXAMPLE "build example" ON)
 
-target_link_libraries(example simple_state_machine)
+target_link_libraries(SIMPLESTATEMACHINE pthread)
 
-target_include_directories(example PRIVATE
-    "${PROJECT_SOURCE_DIR}/basicState"
-    "${PROJECT_SOURCE_DIR}/json"
-    "${PROJECT_SOURCE_DIR}/simpleLogger"
-    "${PROJECT_SOURCE_DIR}/stateManager"
-    "${PROJECT_SOURCE_DIR}/utilities"
-    "${PROJECT_SOURCE_DIR}"
-)
+if(USE_ZMQPP)
+    target_link_libraries(SIMPLESTATEMACHINE zmqpp zmq sodium pthread)
+    target_compile_definitions(SIMPLESTATEMACHINE PUBLIC "USE_ZMQPP")
+endif()
+
+if(BUILD_EXAMPLE)
+    if(USE_ZMQPP)
+        set(EXAMPLE example_zmq)
+        set(EXAMPLE_HELPER example_zmq_helper)
+    else()
+        set(EXAMPLE example_socket)
+        set(EXAMPLE_HELPER example_socket_helper)
+    endif()
+
+    add_executable(${EXAMPLE} "${PROJECT_SOURCE_DIR}/example/${EXAMPLE}.cpp")
+    target_link_libraries(${EXAMPLE} SIMPLESTATEMACHINE)
+    target_include_directories(${EXAMPLE} PRIVATE
+        "${PROJECT_SOURCE_DIR}/basicState"
+        "${PROJECT_SOURCE_DIR}/json"
+        "${PROJECT_SOURCE_DIR}/simpleLogger"
+        "${PROJECT_SOURCE_DIR}/stateManager"
+        "${PROJECT_SOURCE_DIR}/utilities"
+        "${PROJECT_SOURCE_DIR}"
+    )
+
+    execute_process(
+        COMMAND make clean
+        COMMAND make ${EXAMPLE_HELPER}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/example
+    )
+
+endif()

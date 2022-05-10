@@ -1,18 +1,26 @@
 #include "simpleStateMachine.hpp"
 #include <iostream>
 
+#define SIMPLELOGEXAMPLE(STATUS, MSG)                                                          \
+    do{                                                                                 \
+    auto cur_time = std::chrono::system_clock::now();                                   \
+    std::time_t cur_time_t = std::chrono::system_clock::to_time_t(cur_time);            \
+        std::cout << "[example_zmq][" << strtok(std::ctime(&cur_time_t), "\n") << "][" \
+        << #STATUS << "] " << MSG << std::endl;                                         \
+    } while(false)
+
 int main(int argc, char const *argv[])
 {
     auto state1 = std::shared_ptr<simpleStateMachine::BasicState>(new simpleStateMachine::BasicState("state1", true, false, [](){
-        printf("state1\n");
+        SIMPLELOGEXAMPLE(NORMAL, "state1");
     }));
 
     auto state2 = std::shared_ptr<simpleStateMachine::BasicState>(new simpleStateMachine::BasicState("state2", false, false, [](){
-        printf("state2\n");
+        SIMPLELOGEXAMPLE(NORMAL,"state2");
     }));
 
     auto state3 = std::shared_ptr<simpleStateMachine::BasicState>(new simpleStateMachine::BasicState("state3", false, false, [](){
-        printf("state3\n");
+        SIMPLELOGEXAMPLE(NORMAL,"state3");
     }));
 
 

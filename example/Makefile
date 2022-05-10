@@ -10,5 +10,8 @@ all:	${TARGETS}
 clean:
 	${RM} *.obj *~* ${TARGETS}
 
-${TARGETS}:
+example_zmq_helper: example_zmq_helper.cpp
 	${CPP} ${CPPFLAGS} -o $@ ${@:%=%.cpp} ${LDFLAGS}
+
+example_socket_helper: example_socket_helper.cpp
+	${CPP} ${CPPFLAGS} -o $@ ${@:%=%.cpp}

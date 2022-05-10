@@ -5,6 +5,7 @@
 
 namespace simpleStateMachine{
 
+#ifdef USE_ZMQPP
     void * StateManager::zmq_sub_thread_worker(){
         while (system_status_ == StateManagerStatus::up) {
             bool rc;
@@ -38,6 +39,7 @@ namespace simpleStateMachine{
         }
         return nullptr;
     }
+#endif
 
     void * StateManager::status_control_worker(){
         auto transition_check_func = [&](std::shared_ptr<transitions_entry> t)->bool{
@@ -79,6 +81,7 @@ namespace simpleStateMachine{
 
         nlohmann::json config_json = nlohmann::json::parse(config_string);
 
+#ifdef USE_ZMQPP
         zmq_context_ = std::shared_ptr<zmqpp::context>(new zmqpp::context());
 
         if(config_json["zmq"]["sub"]["on"].get<bool>()==true){
@@ -122,16 +125,20 @@ namespace simpleStateMachine{
 
             SIMPLELOG(NORMAL, msg);
         }
+#endif
 
         current_state_ = start_point_;
         system_status_ = StateManagerStatus::up;
+#ifdef USE_ZMQPP
         zmq_sub_thread_ = std::shared_ptr<std::thread>(new std::thread(&StateManager::zmq_sub_thread_worker, this));
         zmq_pub_thread_ = std::shared_ptr<std::thread>(new std::thread(&StateManager::zmq_pub_thread_worker, this));
+#endif
         status_control_thread_ = std::shared_ptr<std::thread>(new std::thread(&StateManager::status_control_worker, this));
         SIMPLELOG(NORMAL, std::string("stateManger working"));
 
     }
 
+#ifdef USE_ZMQPP
     bool StateManager::pop_sub_message(std::string &msg){
         std::unique_lock<std::mutex> lock(sub_buffer_lock_);
         msg = zmq_sub_buffer_->pop();
@@ -153,6 +160,7 @@ namespace simpleStateMachine{
         std::unique_lock<std::mutex> lock(pub_buffer_lock_);
         zmq_pub_buffer_->push(msg);
     }
+#endif
 
     std::string StateManager::concate_state_id(std::shared_ptr<BasicState> state1, std::shared_ptr<BasicState> state2){
         if(state_to_id_.count(state1)==0 || state_to_id_.count(state2)==0){
@@ -266,8 +274,11 @@ namespace simpleStateMachine{
         system_status_ = StateManagerStatus::idle;
 
         status_control_thread_->join();
+
+#ifdef USE_ZMQPP
         zmq_sub_thread_->join();
         zmq_pub_thread_->join();
+#endif
 
         std::string msg = "stateManager down";
         SIMPLELOG(NORMAL, msg);
