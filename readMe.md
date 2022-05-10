@@ -37,7 +37,7 @@ the basic usage could be found in the `example/` folder, which include two sets 
 ---
 
 for `example_zmq` and `example_zmq_helper`, it use the built-in zmq function. it require libs including zmqpp, zmq, sodium.
-running the following command to build them, notice the `example_zmq_helper` will be built in `example` folder
+running the following command to build them, notice the `example_zmq_helper` will be built in `example` folder.
 ```bash
 mkdir build
 cd build
@@ -49,7 +49,8 @@ cmake --build .
 ---
 
 for `example_socket` and `example_socket_helper`, it does not use the built-in zmq function and it use socket instead.
-running the following command to build them, notice the `example_socket_helper` will be built in `example` folder
+**Notice**: due to the design of `example_socket`, run `example_socket_helper` before `example_socket`. also, this is just a simple socket connection for illustration, as long as one end disconnected, the whole system would then stopped. to make stateManager could deconstructed correctly, further operations are needed.
+running the following command to build them, notice the `example_socket_helper` will be built in `example` folder.
 ```bash
 mkdir build
 cd build
@@ -68,7 +69,7 @@ cmake --build .
 
 ### build & install
 - [x] build
-- [ ] install
+- [x] install
 
 ## special thanks
 

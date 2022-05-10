@@ -65,3 +65,26 @@ if(BUILD_EXAMPLE)
     )
 
 endif()
+
+install(TARGETS SIMPLESTATEMACHINE DESTINATION "${PROJECT_BINARY_DIR}/install/lib")
+install(FILES "${PROJECT_SOURCE_DIR}/config/service.json" DESTINATION "${PROJECT_BINARY_DIR}/install/config")
+install(FILES
+    "${PROJECT_SOURCE_DIR}/simpleStateMachine.hpp"
+    DESTINATION "${PROJECT_BINARY_DIR}/install/include"
+)
+install(FILES
+    "${PROJECT_SOURCE_DIR}/basicState/basicState.hpp"
+    "${PROJECT_SOURCE_DIR}/json/json.hpp"
+    "${PROJECT_SOURCE_DIR}/simpleLogger/simpleLogger.hpp"
+    "${PROJECT_SOURCE_DIR}/stateManager/stateManager.hpp"
+    ${utilities_files}
+    DESTINATION "${PROJECT_BINARY_DIR}/install/include"
+)
+if(BUILD_EXAMPLE)
+    install(TARGETS ${EXAMPLE} DESTINATION "${PROJECT_BINARY_DIR}/install/bin")
+    install(
+        FILES "${PROJECT_SOURCE_DIR}/example/${EXAMPLE_HELPER}" 
+        DESTINATION "${PROJECT_BINARY_DIR}/install/bin"
+        PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+    )
+endif()

@@ -1,2 +1,2 @@
-#include "basicState/basicState.hpp"
-#include "stateManager/stateManager.hpp"
+#include "basicState.hpp"
+#include "stateManager.hpp"

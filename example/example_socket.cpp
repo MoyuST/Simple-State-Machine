@@ -79,6 +79,7 @@ int main(int argc, char const* argv[])
     STATEMANAGER->register_transistion_func(state2, state3, 1, [&]()->bool{
         std::string request = "request from state2";
         send(sock, request.c_str(), strlen(request.c_str()), 0);
+        SIMPLELOGEXAMPLE(NORMAL, "state2_request");
         valread = read(sock, buffer, 1024);
         std::string buffer_str(buffer);
 
@@ -93,6 +94,7 @@ int main(int argc, char const* argv[])
     STATEMANAGER->register_transistion_func(state3, state1, 1, [&]()->bool{
         std::string request = "request from state3";
         send(sock, request.c_str(), strlen(request.c_str()), 0);
+        SIMPLELOGEXAMPLE(NORMAL, "state3_request");
         valread = read(sock, buffer, 1024);
         std::string buffer_str(buffer);
 
