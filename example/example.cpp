@@ -18,21 +18,21 @@ int main(int argc, char const *argv[])
 
     STATEMANAGER->register_transistion_func(state1, state2, 1, []()->bool{
         if(STATEMANAGER->system_zmq_info().contains("enter")){
-            return STATEMANAGER->system_zmq_info()["enter"] == "1->2";
+            return STATEMANAGER->system_zmq_info()["enter"].get<std::string>() == "1->2";
         }
         return false;
     });
 
     STATEMANAGER->register_transistion_func(state2, state3, 1, []()->bool{
         if(STATEMANAGER->system_zmq_info().contains("enter")){
-            return STATEMANAGER->system_zmq_info()["enter"] == "2->3";
+            return STATEMANAGER->system_zmq_info()["enter"].get<std::string>() == "2->3";
         }
         return false;
     });
 
     STATEMANAGER->register_transistion_func(state3, state1, 1, []()->bool{
         if(STATEMANAGER->system_zmq_info().contains("enter")){
-            return STATEMANAGER->system_zmq_info()["enter"] == "3->1";
+            return STATEMANAGER->system_zmq_info()["enter"].get<std::string>() == "3->1";
         }
         return false;
     });

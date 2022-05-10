@@ -110,8 +110,8 @@ namespace simpleStateMachine{
             }
 
             static StateManager * spin(){
+                signal (SIGINT, stop_controller);
                 while(1){
-                    signal (SIGINT, stop_controller);
                 }
             }
 
