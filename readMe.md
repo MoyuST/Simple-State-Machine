@@ -32,6 +32,8 @@ During my first formal internship, I had read tons of codes of the company. Amon
 
 ## usage
 
+### running in local environment
+
 the basic usage could be found in the `example/` folder, which include two sets of examples, one using built-in zmq function in the stateManger while another one use socket instead of zmq.
 
 ---
@@ -59,6 +61,12 @@ cmake --build .
 ```
 ![example_socket result](Assets/img/../imgs/example_socket.png)
 
+### running in docker environment
+
+to make running the program easier, an extra docker is provided, to pull that docker just run `docker pull xueshengst/simplestateenv`, and enter `/usr/app` folder, where the program is placed.
+
+if you want to modify the docker environment, the original Dockerfile is provided in the `docker` folder, and you can run `docker build -t your_docker_id/your_image_name .` to build it, make sure replace `your_docker_id` and `your_image_name` with the proper name.
+
 ## current process
 
 ### implementation
@@ -70,6 +78,9 @@ cmake --build .
 ### build & install
 - [x] build
 - [x] install
+
+### docker env
+- [x] docker env
 
 ## special thanks
 
